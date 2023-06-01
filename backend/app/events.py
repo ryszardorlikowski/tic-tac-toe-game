@@ -1,4 +1,4 @@
-from api.extensions import socketio
+from .extensions import socketio
 
 
 @socketio.on('message')
