@@ -5,6 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    container_name: tic_tac_toe_game
     entrypoint: [ "sh", "/usr/src/app/entrypoint.sh" ]
     volumes:
       - "./backend:/usr/src/app"

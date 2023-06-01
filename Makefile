@@ -9,3 +9,7 @@ docker-logs:
 
 docker-down:
 	docker compose down
+
+
+run-backend-tests:
+	docker exec tic_tac_toe_game pytest tests/ -v -s
