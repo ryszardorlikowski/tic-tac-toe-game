@@ -18,4 +18,4 @@ def create_app():
     return app
 
 
-_all_ = ['create_app', 'socketio']
+_all_ = ['create_app', 'socketio', 'db']
