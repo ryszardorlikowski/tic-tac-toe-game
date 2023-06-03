@@ -6,6 +6,7 @@ import type { GameResultOutputSchema } from '../models/GameResultOutputSchema';
 import type { GameSessionOutputSchema } from '../models/GameSessionOutputSchema';
 import type { PlayerInputSchema } from '../models/PlayerInputSchema';
 import type { PlayerOutputSchema } from '../models/PlayerOutputSchema';
+import type { PlayersStatsOutputSchema } from '../models/PlayersStatsOutputSchema';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -134,6 +135,20 @@ export class GameService {
             url: '/api/players',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                422: `Unprocessable Entity`,
+            },
+        });
+    }
+
+    /**
+     * @returns PlayersStatsOutputSchema OK
+     * @throws ApiError
+     */
+    public static getAllPlayersStatistics(): CancelablePromise<PlayersStatsOutputSchema> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/players/statistics',
             errors: {
                 422: `Unprocessable Entity`,
             },

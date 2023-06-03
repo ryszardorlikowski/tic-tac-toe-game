@@ -14,9 +14,9 @@
   <van-popup v-model:show="showResultPopup" :closeable="false" :style="{ padding: '64px',  background: '#3880e0' }">
     <div class="result">
       You
-      <span v-if="gameResult.result === 0">draw! </span>
-      <span v-if="gameResult.result === 1">win! </span>
-      <span v-if="gameResult.result === 2">lose! </span>
+      <span v-if="gameResult?.result === 0">draw! </span>
+      <span v-if="gameResult?.result === 1">win! </span>
+      <span v-if="gameResult?.result === 2">lose! </span>
     </div>
     <van-button v-if="lockBoard" round type="primary" @click="showResultPopup=false">
       Close

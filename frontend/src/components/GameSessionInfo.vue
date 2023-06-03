@@ -1,11 +1,11 @@
 <template>
   <van-cell-group class="card" inset border>
-    <van-cell title="Credits" :value="sessionInfo.credits"/>
-    <van-cell title="Wins" :value="sessionInfo.wins"/>
-    <van-cell title="Losses" :value="sessionInfo.losses"/>
-    <van-cell title="Draws" :value="sessionInfo.draws"/>
+    <van-cell title="Credits" :value="sessionInfo?.credits"/>
+    <van-cell title="Wins" :value="sessionInfo?.wins"/>
+    <van-cell title="Losses" :value="sessionInfo?.losses"/>
+    <van-cell title="Draws" :value="sessionInfo?.draws"/>
     <van-cell title="Duration" :value="timeDifference"/>
-    <van-button round type="primary" :disabled="sessionInfo.credits!==0" @click="addCredits">
+    <van-button round type="primary" :disabled="sessionInfo?.credits!==0" @click="addCredits">
       Add credits
     </van-button>
   </van-cell-group>
@@ -21,7 +21,7 @@ const props = defineProps({
   sessionInfo: Object as PropType<GameSessionOutputSchema>
 })
 const timeDifference = ref('0s');
-let intervalId;
+let intervalId: any;
 
 
 
@@ -40,7 +40,7 @@ const calculateDifference = () => {
   const now: Date = new Date();
   let difference: number = now.getTime() - date.getTime();
   difference = difference / 1000; // calculate difference in seconds
-  timeDifference.value = parseInt(difference) + 's';
+  timeDifference.value = parseInt(difference.toString()) + 's';
 };
 
 const addCredits = () => {

@@ -19,11 +19,15 @@
   <div style="margin: 16px;">
     <CreatePlayerPopup/>
   </div>
+  <div style="margin: 16px;">
+    <PlayersStatistics/>
+  </div>
 </template>
 
 <script setup lang="ts">
 import {ref} from "vue";
 import CreatePlayerPopup from "../components/CreatePlayerPopup.vue"
+import PlayersStatistics from "../components/PlayersStatistics.vue"
 import {useGameSessionStore} from "../store/GameSessionStore";
 import {showNotify} from "vant";
 

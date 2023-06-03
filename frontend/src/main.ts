@@ -2,7 +2,7 @@ import {createApp} from 'vue'
 import './style.css'
 import App from './App.vue'
 import {createPinia} from 'pinia'
-import {Button, Form, Field, CellGroup, Col, Row, Popup, Cell, Divider, Notify, Tag, Grid, GridItem, Icon} from 'vant';
+import {Button, Form, Field, CellGroup, Col, Row, Popup, Cell, Divider, Notify, Tag, Grid, GridItem, Icon, Loading} from 'vant';
 import 'vant/lib/index.css';
 import {OpenAPI} from "./api/owi";
 
@@ -25,4 +25,5 @@ app.use(Tag);
 app.use(Grid);
 app.use(GridItem);
 app.use(Icon);
+app.use(Loading)
 app.mount('#app')
