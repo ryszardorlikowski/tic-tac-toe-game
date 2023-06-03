@@ -52,17 +52,15 @@ class GameSession(db.Model):
     @property
     def wining_combinations(self):
         return [
-            self.current_board[0:3],
-            self.current_board[3:6],
-            self.current_board[6:9],
-            self.current_board[0:9:3],
-            self.current_board[1:9:3],
-            self.current_board[2:9:3],
-            self.current_board[0:9:4],
-            self.current_board[2:7:2]
-        ]
+                   self.board[i * 3:i * 3 + 3] for i in range(3)  # wiersze
+               ] + [
+                   self.board[i::3] for i in range(3)  # kolumny
+               ] + [
+                   [self.board[i] for i in range(0, 9, 4)],  # przekątna od lewego górnego do prawego dolnego rogu
+                   [self.board[i] for i in range(2, 8, 2)],  # przekątna od prawego górnego do lewego dolnego rogu
+               ]
 
-    def end_game(self):
+    def update_end_time(self):
         self.end_time = db.func.now()
         db.session.commit()
 
@@ -76,6 +74,11 @@ class GameSession(db.Model):
 
     def play_turn(self, cell: int):
         self._player_make_move(cell)
+        result = self._get_result()
+        if result is not None:
+            db.session.commit()
+            return result
+
         self._computer_make_move()
         result = self._get_result()
         db.session.commit()

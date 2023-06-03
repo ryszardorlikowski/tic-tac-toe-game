@@ -1,8 +1,6 @@
 import pytest
-from flask_sqlalchemy.session import Session
 
 from app import create_app, db as _db
-from app.models import Player, GameResult, GameSession
 
 TEST_CONFIG = {
     'TESTING': True,
