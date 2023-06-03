@@ -30,3 +30,8 @@ class PlayerNotFound(APIError):
 class PlayerAlreadyExists(APIError):
     code = 409
     description = "Player already exists."
+
+
+class NotGameExists(APIError):
+    code = 400
+    description = "You have to start new game."

@@ -56,6 +56,20 @@ def create_game_session(body: CreateGameSessionInputSchema):
     return game_session.dict(), HTTPStatus.CREATED
 
 
+@api.get('/game-sessions/<session_id>',
+         tags=[game_tag],
+         responses={"200": GameSessionOutputSchema},
+         operation_id="get_game_session")
+def get_game_session(path: SessionIdPathInputSchema):
+    game_repository = GameRepository(db.session)
+    game_session = game_repository.get_game_session(session_id=path.session_id)
+
+    if not game_session:
+        raise GameSessionNotFound
+
+    return game_session.dict(), HTTPStatus.OK
+
+
 @api.post('/game-sessions/<session_id>/new-game',
           tags=[game_tag],
           responses={"200": GameSessionOutputSchema},

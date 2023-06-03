@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import IntEnum
 
-from .exceptions import NotAllowedMove, CannotAddCredits, CannotStartNewGame
+from .exceptions import NotAllowedMove, CannotAddCredits, CannotStartNewGame, NotGameExists
 from .extensions import db
 
 
@@ -73,6 +73,9 @@ class GameSession(db.Model):
             raise CannotStartNewGame
 
     def play_turn(self, cell: int):
+        if self.current_board is None:
+            raise NotGameExists
+
         self._player_make_move(cell)
         result = self._get_result()
         if result is not None:
@@ -110,6 +113,7 @@ class GameSession(db.Model):
     def _get_result(self) -> GameResult | None:
         if [self.SIGN_PLAYER, self.SIGN_PLAYER, self.SIGN_PLAYER] in self.wining_combinations:
             self.wins += 1
+            self.credits += 4
             return GameResult.WON
         elif [self.SIGN_COMPUTER, self.SIGN_COMPUTER, self.SIGN_COMPUTER] in self.wining_combinations:
             self.losses += 1

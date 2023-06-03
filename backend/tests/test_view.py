@@ -20,6 +20,14 @@ def test_create_game_session(test_client, player, db_session):
     assert response.json['board'] is None
 
 
+def test_get_game_session(test_client, game_session, db_session):
+    response = test_client.get(f'/api/game-sessions/{game_session.id}')
+
+    assert response.status_code == 200
+    assert response.json['player_id'] == game_session.player_id
+    assert response.json['board'] is None
+
+
 def test_start_new_game(test_client, game_session, db_session):
     response = test_client.post(f'/api/game-sessions/{game_session.id}/new-game')
 
