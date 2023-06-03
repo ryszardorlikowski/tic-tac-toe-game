@@ -1,21 +1,5 @@
 import pytest
-from app.models import Player, GameSession, GameResult, NotAllowedMove, CannotAddCredits, CannotStartNewGame
-
-
-@pytest.fixture
-def player(db_session):
-    player = Player(name="test_player")
-    db_session.add(player)
-    db_session.commit()
-    return player
-
-
-@pytest.fixture
-def game_session(db_session):
-    game_session = GameSession(player_id=1)
-    db_session.add(game_session)
-    db_session.commit()
-    return game_session
+from app.models import GameSession, GameResult, NotAllowedMove, CannotAddCredits, CannotStartNewGame
 
 
 def test_create_player(player):

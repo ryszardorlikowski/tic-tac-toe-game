@@ -1,24 +1,3 @@
-import pytest
-
-from app.models import Player, GameSession
-
-
-@pytest.fixture
-def player(db_session):
-    player = Player(name="test_player")
-    db_session.add(player)
-    db_session.commit()
-    return player
-
-
-@pytest.fixture
-def game_session(db_session):
-    game_session = GameSession(player_id=1)
-    db_session.add(game_session)
-    db_session.commit()
-    return game_session
-
-
 def test_get_player(test_client, player, db_session):
     response = test_client.get(f'/api/players/{player.name}')
 

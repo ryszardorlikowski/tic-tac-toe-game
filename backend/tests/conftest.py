@@ -1,6 +1,7 @@
 import pytest
 
 from app import create_app, db as _db
+from app.models import Player, GameSession
 
 TEST_CONFIG = {
     'TESTING': True,
@@ -11,10 +12,8 @@ TEST_CONFIG = {
 
 @pytest.fixture(scope='session')
 def app(request):
-    """Session-wide test `Flask` application."""
-    app = create_app(TEST_CONFIG)
+    app = create_app(config_override=TEST_CONFIG)
 
-    # Establish an application context before running the tests.
     ctx = app.app_context()
     ctx.push()
 
@@ -53,3 +52,17 @@ def db_session(db, request):
     return session
 
 
+@pytest.fixture
+def player(db_session):
+    player = Player(name="test_player")
+    db_session.add(player)
+    db_session.commit()
+    return player
+
+
+@pytest.fixture
+def game_session(db_session):
+    game_session = GameSession(player_id=1)
+    db_session.add(game_session)
+    db_session.commit()
+    return game_session
