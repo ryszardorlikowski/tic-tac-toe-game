@@ -25,6 +25,9 @@ Clicking the "Players statistics" button will display a panel with players stati
 ## Socket.io
 The Socket.io library enables real-time communication between the client and the server. In the application, during the start of a game session, it is responsible for updating the game time.
 
+## OpenAPI
+The OpenAPI specification is used to describe the REST API. The specification is available at http://localhost:5002/openapi/
+
 ## Installation
 Commands have been added to the repository to build Docker images with the project and run the containers. Simply execute the following commands:
 
