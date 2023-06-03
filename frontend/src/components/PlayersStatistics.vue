@@ -11,7 +11,7 @@
         <div class="cell"><small>Wins:</small> {{ player.wins }}</div>
         <div class="cell"><small>Losses:</small> {{ player.losses }}</div>
         <div class="cell"><small>Draws:</small> {{ player.draws }}</div>
-        <div class="cell"><small>Play time:</small> {{ parseInt(player.game_duration_seconds.toString()) }}s</div>
+        <div class="cell"><small>Playtime:</small> {{ parseInt(player.game_duration_seconds.toString()) }}s</div>
       </div>
     </div>
   </van-popup>
