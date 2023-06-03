@@ -1,7 +1,11 @@
-from flask_openapi3 import Info, Tag
+from flask import jsonify
+from flask_openapi3 import Info
 from flask_openapi3 import OpenAPI
+
+from .exceptions import APIError
 from .extensions import socketio, db, cors
 from .views import api
+from .socketio_handlers import *
 
 
 def create_app(config_override=None):
@@ -17,6 +21,10 @@ def create_app(config_override=None):
     cors.init_app(app)
 
     app.register_api(api)
+
+    @app.errorhandler(APIError)
+    def handle_exception(err):
+        return jsonify({"message": err.description}), err.code
 
     return app
 
