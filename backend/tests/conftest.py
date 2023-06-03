@@ -1,17 +1,35 @@
+import psycopg2
 import pytest
+from psycopg2 import extensions
 
-from app import create_app, db as _db
+from app import create_app, db as _db, config
 from app.models import Player, GameSession
+
+TEST_DATABASE_NAME = 'test_db'
 
 TEST_CONFIG = {
     'TESTING': True,
     'DEBUG': True,
-    'SQLALCHEMY_DATABASE_URI': 'sqlite:///:memory:'
+    'SQLALCHEMY_DATABASE_URI': config.SQLALCHEMY_DATABASE_URI.replace('game', TEST_DATABASE_NAME),
 }
+
+
+def create_test_db():
+    conn = psycopg2.connect(config.SQLALCHEMY_DATABASE_URI)
+    conn.set_isolation_level(extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT datname FROM pg_catalog.pg_database WHERE datname='{TEST_DATABASE_NAME}'")
+    result = cursor.fetchone()
+    if result is None:
+        cursor.execute(f'CREATE DATABASE {TEST_DATABASE_NAME}')
+    cursor.close()
+    conn.close()
 
 
 @pytest.fixture(scope='session')
 def app(request):
+    create_test_db()
+
     app = create_app(config_override=TEST_CONFIG)
 
     ctx = app.app_context()
@@ -61,7 +79,7 @@ def player(db_session):
 
 
 @pytest.fixture
-def game_session(db_session):
+def game_session(db_session, player):
     game_session = GameSession(player_id=1)
     db_session.add(game_session)
     db_session.commit()

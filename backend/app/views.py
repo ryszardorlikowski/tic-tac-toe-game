@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import List
 
 from flask_openapi3 import APIBlueprint, Tag
 
@@ -7,7 +8,7 @@ from app.models import db
 from app.repositories import PlayerRepository, GameRepository
 from app.schemas import PlayerOutputSchema, CreateGameSessionInputSchema, \
     GameSessionOutputSchema, GameResultOutputSchema, SessionIdPathInputSchema, GameMovePathInputSchema, \
-    PlayerInputSchema
+    PlayerInputSchema, PlayerStatsSchema, PlayersStatsOutputSchema
 
 api = APIBlueprint('api', __name__, url_prefix='/api')
 game_tag = Tag(name='Game', description='Game related operations')
@@ -25,6 +26,15 @@ def get_player(path: PlayerInputSchema):
         raise PlayerNotFound
 
     return player.dict(), HTTPStatus.OK
+
+
+@api.get('/players/statistics',
+         tags=[game_tag],
+         responses={"200": PlayersStatsOutputSchema},
+         operation_id="get_all_players_statistics")
+def get_all_players_statistics():
+    player_repository = PlayerRepository(db.session)
+    return {'results': [row._asdict() for row in player_repository.get_players_stats()]}, HTTPStatus.OK
 
 
 @api.post('/players',

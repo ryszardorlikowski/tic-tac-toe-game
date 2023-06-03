@@ -10,3 +10,4 @@ eventlet==0.30.2
 pydantic==1.10.8
 pytest==7.3.1
 freezegun==1.2.2
+sqlalchemy-utils==0.37.8

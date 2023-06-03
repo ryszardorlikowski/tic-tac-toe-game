@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+
 def test_get_player(test_client, player, db_session):
     response = test_client.get(f'/api/players/{player.name}')
 
@@ -10,6 +13,27 @@ def test_create_player(test_client, db_session):
 
     assert response.status_code == 201
     assert response.json['name'] == 'Test Player'
+
+
+def test_get_all_players_statistics(test_client, db_session, game_session, player):
+    time = datetime.now()
+    game_session.start_time = time - timedelta(minutes=1)
+    game_session.end_time = time
+    game_session.wins = 1
+    game_session.losses = 0
+    db_session.commit()
+
+    response = test_client.get('/api/players/statistics')
+    assert response.status_code == 200
+
+    assert len(response.json['results']) == 1
+
+    player1 = response.json['results'][0]
+    assert player1 is not None
+    assert player1['player_name'] == player.name
+    assert player1['game_duration_seconds'] == 60
+    assert player1['wins'] == 1
+    assert player1['losses'] == 0
 
 
 def test_create_game_session(test_client, player, db_session):

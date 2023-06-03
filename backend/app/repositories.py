@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from datetime import datetime
+
+from sqlalchemy import func, and_, cast, extract
+from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.orm import Session
 
 from .models import Player, GameSession
@@ -18,6 +22,21 @@ class PlayerRepository:
         self.session.add(player)
         self.session.commit()
         return player
+
+    def get_players_stats(self):
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        return self.session.query(
+            GameSession.player_id,
+            Player.name.label('player_name'),
+            func.sum(GameSession.wins).label('wins'),
+            func.sum(GameSession.losses).label('losses'),
+            func.sum(GameSession.draws).label('draws'),
+            func.sum(extract('epoch', GameSession.end_time - GameSession.start_time)).label('game_duration_seconds')
+        ).join(Player).filter(
+            and_(GameSession.start_time >= today)
+        ).group_by(
+            GameSession.player_id, Player.name
+        ).all()
 
 
 class GameRepository:

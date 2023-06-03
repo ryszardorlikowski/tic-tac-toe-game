@@ -42,3 +42,16 @@ class GameSessionOutputSchema(BaseModel):
     wins: int
     losses: int
     draws: int
+
+
+class PlayerStatsSchema(BaseModel):
+    player_id: int
+    player_name: str
+    wins: int
+    losses: int
+    draws: int
+    game_duration_seconds: int
+
+
+class PlayersStatsOutputSchema(BaseModel):
+    results: List[PlayerStatsSchema]
