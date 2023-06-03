@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import IntEnum
 
 from .exceptions import NotAllowedMove, CannotAddCredits, CannotStartNewGame
 from .extensions import db
@@ -19,7 +19,7 @@ class Player(db.Model):
         }
 
 
-class GameResult(Enum):
+class GameResult(IntEnum):
     DRAW = 0
     WON = 1
     LOST = 2
@@ -114,18 +114,22 @@ class GameSession(db.Model):
         elif ' ' not in self.current_board:
             self.draws += 1
             return GameResult.DRAW
+        return None
 
-    def _make_move(self, cell: int, sign: str):
-        if self.board[cell] == ' ':
-            self.board[cell] = sign
+    def _make_move(self, cell: int, sign: str) -> None:
+        if self.current_board[cell] == ' ':
+            self.current_board = self.current_board[:cell] + sign + self.current_board[cell + 1:]
+            return
         raise NotAllowedMove
 
     def _player_make_move(self, cell: int):
         return self._make_move(cell, self.SIGN_PLAYER)
 
     def _computer_make_move(self):
+        # TODO: implement better AI :)
         for i in range(9):
             try:
                 self._make_move(i, self.SIGN_COMPUTER)
-            except ValueError:
+                break
+            except NotAllowedMove:
                 continue
