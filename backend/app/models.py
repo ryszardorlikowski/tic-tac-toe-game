@@ -52,12 +52,12 @@ class GameSession(db.Model):
     @property
     def wining_combinations(self):
         return [
-                   self.board[i * 3:i * 3 + 3] for i in range(3)  # wiersze
+                   self.board[i * 3:i * 3 + 3] for i in range(3)  # rows
                ] + [
-                   self.board[i::3] for i in range(3)  # kolumny
+                   self.board[i::3] for i in range(3)  # columns
                ] + [
-                   [self.board[i] for i in range(0, 9, 4)],  # przekątna od lewego górnego do prawego dolnego rogu
-                   [self.board[i] for i in range(2, 8, 2)],  # przekątna od prawego górnego do lewego dolnego rogu
+                   [self.board[i] for i in range(0, 9, 4)],  # diagonal from left upper to right bottom corner
+                   [self.board[i] for i in range(2, 8, 2)],  # diagonal from right upper to left bottom corner
                ]
 
     def update_end_time(self):
