@@ -1,47 +1,66 @@
-from datetime import datetime
+import pytest
 
-from flask import url_for
-from freezegun import freeze_time
-
-from tests.conftest import default_credits
+from app.models import Player, GameSession
 
 
-def test_get_or_create_player(app, test_client, new_player):
-    with app.test_request_context():
-        url = url_for('api.get_or_create_player', player_name=new_player.name)
+@pytest.fixture
+def player(db_session):
+    player = Player(name="test_player")
+    db_session.add(player)
+    db_session.commit()
+    return player
 
-    response = test_client.get(url)
 
-    print(response.json)
+@pytest.fixture
+def game_session(db_session):
+    game_session = GameSession(player_id=1)
+    db_session.add(game_session)
+    db_session.commit()
+    return game_session
+
+
+def test_get_player(test_client, player, db_session):
+    response = test_client.get(f'/api/players/{player.name}')
+
     assert response.status_code == 200
-    assert response.json['name'] == new_player.name
-
-    with app.test_request_context():
-        url = url_for('api.get_or_create_player', player_name='no_exits_user')
-
-    response = test_client.get(url)
-
-    assert response.status_code == 200
-    assert response.json['name'] == 'no_exits_user'
+    assert response.json['name'] == player.name
 
 
-def test_create_game_session(app, test_client, new_player):
-    with app.test_request_context():
-        url = url_for('api.create_game_session')
-
-    response = test_client.post(url, json={'player_id': new_player.id})
+def test_create_player(test_client, db_session):
+    response = test_client.post('/api/players', json={"player_name": 'Test Player'})
 
     assert response.status_code == 201
-    assert response.json['credits'] == default_credits
+    assert response.json['name'] == 'Test Player'
 
 
-@freeze_time("2023-06-02 12:34:56")
-def test_create_game(app, test_client, new_game_session):
-    with app.test_request_context():
-        url = url_for('api.create_game')
-
-    response = test_client.post(url, json={'game_session_id': new_game_session.id})
+def test_create_game_session(test_client, player, db_session):
+    response = test_client.post('/api/game-sessions', json={"player_id": player.id})
 
     assert response.status_code == 201
-    assert response.json['start_time'] == 'Fri, 02 Jun 2023 12:34:56 GMT'
-    assert response.json['board'] == []
+    assert response.json['player_id'] == player.id
+    assert response.json['board'] is None
+
+
+def test_start_new_game(test_client, game_session, db_session):
+    response = test_client.post(f'/api/game-sessions/{game_session.id}/new-game')
+
+    assert response.status_code == 200
+    assert response.json['board'] == [' '] * 9
+
+
+def test_make_move(test_client, game_session, db_session):
+    game_session.current_board = ' ' * 9
+    db_session.commit()
+    response = test_client.post(f'/api/game-sessions/{game_session.id}/move/{0}')
+
+    assert response.status_code == 200
+    assert response.json['result'] is None
+
+
+def test_add_credits(test_client, game_session, db_session):
+    game_session.credits = 0
+    db_session.commit()
+    response = test_client.post(f'/api/game-sessions/{game_session.id}/credits')
+
+    assert response.status_code == 200
+    assert response.json['credits'] == 10

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from app.models import GameResult
 
 
-class CreatePlayerInputSchema(BaseModel):
+class PlayerInputSchema(BaseModel):
     player_name: str
 
 
@@ -17,6 +17,15 @@ class PlayerOutputSchema(BaseModel):
 
 class CreateGameSessionInputSchema(BaseModel):
     player_id: int
+
+
+class SessionIdPathInputSchema(BaseModel):
+    session_id: int
+
+
+class GameMovePathInputSchema(BaseModel):
+    session_id: int
+    move: int
 
 
 class GameResultOutputSchema(BaseModel):
