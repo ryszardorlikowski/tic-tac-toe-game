@@ -1,48 +1,74 @@
-from datetime import datetime, timezone
-
 import pytest
-from sqlalchemy.orm import Session
-from app.models import Player, GameSession, Game, GameResult
+from unittest.mock import Mock, MagicMock
+
 from app.repositories import PlayerRepository, GameRepository
-from freezegun import freeze_time
-
-from tests.conftest import default_credits, board, result
+from app.models import Player, GameSession
 
 
-@pytest.fixture
-def player_repository(db_session: Session) -> PlayerRepository:
-    return PlayerRepository(db_session)
+@pytest.fixture(scope='module')
+def db_session_mock():
+    return MagicMock()
 
 
-@pytest.fixture
-def game_repository(db_session: Session) -> GameRepository:
-    return GameRepository(db_session)
+@pytest.fixture(scope='module')
+def player_repository(db_session_mock):
+    return PlayerRepository(db_session_mock)
 
 
-def test_get_or_create_player(player_repository: PlayerRepository, new_player: Player):
-    player = player_repository.get_or_create_player(new_player.name)
-    assert player.name == new_player.name
+@pytest.fixture(scope='module')
+def game_repository(db_session_mock):
+    return GameRepository(db_session_mock)
 
 
-def test_create_game_session(game_repository: GameRepository, new_player: Player):
-    game_session = game_repository.create_game_session(new_player.id)
-    assert game_session.credits == default_credits
+def test_get_player(player_repository, db_session_mock):
+    player_name = "test_player"
+
+    expected_player = Player(name=player_name)
+    db_session_mock.query.return_value.filter_by.return_value.first.return_value = expected_player
+
+    result = player_repository.get_player(player_name)
+
+    db_session_mock.query.assert_called_with(Player)
+    db_session_mock.query.return_value.filter_by.assert_called_with(name=player_name)
+
+    assert result == expected_player
 
 
-def test_update_game_session_credits(game_repository: GameRepository, new_game_session: GameSession):
-    game_session = game_repository.update_game_session_credits(new_game_session.id, 100)
-    assert game_session.credits == 100
+def test_create_player(player_repository, db_session_mock):
+    player_name = "test_player"
+
+    expected_player = Player(name=player_name)
+
+    result = player_repository.create_player(player_name)
+
+    db_session_mock.add.assert_called()
+    db_session_mock.commit.assert_called()
+
+    assert result.name == expected_player.name
 
 
-@freeze_time("2023-06-01 20:20:48")
-def test_create_game(game_repository: GameRepository, new_game_session: GameSession):
-    game = game_repository.create_game(new_game_session.id)
-    assert game.start_time.replace(microsecond=0) == datetime(2023, 6, 1, 20, 20, 48)
+def test_get_game_session(game_repository, db_session_mock):
+    session_id = 1
+
+    expected_game_session = GameSession(player_id=1)
+    db_session_mock.query.return_value.filter_by.return_value.first.return_value = expected_game_session
+
+    result = game_repository.get_game_session(session_id)
+
+    db_session_mock.query.assert_called_with(GameSession)
+    db_session_mock.query.return_value.filter_by.assert_called(session_id=session_id)
+
+    assert result == expected_game_session
 
 
-@freeze_time("2023-06-02 12:34:56")
-def test_update_game(game_repository: GameRepository, new_game: GameSession):
-    game = game_repository.update_game(new_game.id, board, result)
-    assert game.board == list(board)
-    assert game.result == result
-    assert game.end_time == datetime(2023, 6, 2, 12, 34, 56)
+def test_create_game_session(game_repository, db_session_mock):
+    player_id = 1
+
+    expected_game_session = GameSession(player_id=player_id)
+
+    result = game_repository.create_game_session(player_id)
+
+    db_session_mock.add.assert_called()
+    db_session_mock.commit.assert_called()
+
+    assert result.player_id == expected_game_session.player_id

@@ -6,31 +6,30 @@ from pydantic import BaseModel
 from app.models import GameResult
 
 
-class PlayerPathSchema(BaseModel):
+class CreatePlayerInputSchema(BaseModel):
     player_name: str
 
 
-class PlayerSchema(BaseModel):
+class PlayerOutputSchema(BaseModel):
     id: int
     name: str
 
 
-class CreateGameSessionSchema(BaseModel):
+class CreateGameSessionInputSchema(BaseModel):
     player_id: int
 
 
-class CreateGameSchema(BaseModel):
-    game_session_id: int
+class GameResultOutputSchema(BaseModel):
+    result: GameResult = None
 
 
-class GameSessionSchema(BaseModel):
+class GameSessionOutputSchema(BaseModel):
     id: int
     credits: int
-
-
-class GameSchema(BaseModel):
-    id: int
     start_time: datetime
     end_time: datetime = None
     result: GameResult = None
     board: List[str]
+    wins: int
+    losses: int
+    draws: int
