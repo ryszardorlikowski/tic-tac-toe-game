@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import {GameSessionOutputSchema} from "../api/owi";
 import { onMounted, onUnmounted, PropType, ref} from "vue";
-import {useGameSessionStore} from "../store/gameSessionStore";
+import {useGameSessionStore} from "../store/GameSessionStore";
 const gameSessionStore = useGameSessionStore();
 const props = defineProps({
   sessionInfo: Object as PropType<GameSessionOutputSchema>

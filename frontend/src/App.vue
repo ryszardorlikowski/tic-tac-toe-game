@@ -1,30 +1,21 @@
-
 <template>
-  {{state}}
-  {{data}}
+  <div class="container">
+    <Game class="content"  v-if="gameSessionStore.player"/>
+    <Home v-else/>
+  </div>
 </template>
 <script setup lang="ts">
-import { io } from "socket.io-client";
-import {onBeforeMount, reactive, ref} from "vue";
-import axios from "axios";
-const state = reactive({
-  connected: false,
-  fooEvents: [],
-  barEvents: []
-});
-const data = ref()
-
-const URL =  import.meta.env.VITE_APP_BACKEND_URL ?? "http://localhost:3000"
-console.log(import.meta.env)
-const socket = io(URL);
-onBeforeMount(async () => {
-  data.value = (await axios.get(URL + '/api')).data;
-  socket.on("connect", () => {
-    state.connected = true;
-  });
-});
+import Home from './views/Home.vue'
+import Game from './views/Game.vue'
+import {useGameSessionStore} from "./store/GameSessionStore";
+const gameSessionStore = useGameSessionStore()
 </script>
 
-<style scoped>
-
+<style>
+body{
+  background: #89b8f6;
+}
+.content{
+  width: 100vw;
+}
 </style>

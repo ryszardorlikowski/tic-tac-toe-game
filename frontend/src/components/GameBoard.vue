@@ -18,6 +18,9 @@
       <span v-if="gameResult.result === 1">win! </span>
       <span v-if="gameResult.result === 2">lose! </span>
     </div>
+    <van-button v-if="lockBoard" round type="primary" @click="showResultPopup=false">
+      Close
+    </van-button>
   </van-popup>
 
   <van-popup v-model:show="showCreditsPopup" :closeable="false" :style="{ padding: '64px',  background: '#3880e0' }">
@@ -27,12 +30,15 @@
     <van-button v-if="lockBoard" round type="primary" @click="backToHome">
       Back to home
     </van-button>
+    <van-button v-if="lockBoard" round type="primary" @click="showCreditsPopup=false">
+      Close
+    </van-button>
   </van-popup>
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, PropType, ref} from "vue";
-import {useGameSessionStore} from "../store/gameSessionStore";
+import {PropType, ref} from "vue";
+import {useGameSessionStore} from "../store/GameSessionStore";
 import {showNotify} from "vant";
 import {GameResultOutputSchema} from "../api/owi";
 
